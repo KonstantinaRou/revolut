@@ -116,7 +116,7 @@ Account Flo doesnt exist
 ```
 400 Bad request
 
-Insufficient balance for %s
+Insufficient balance for Flo
 ```
 ### Tests
 `    mvn test`
