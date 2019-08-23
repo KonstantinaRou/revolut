@@ -59,7 +59,6 @@ public class AccountRepositoryImpl implements AccountRepository {
 	public synchronized void deposit(final Account account, final int balance) {
 
 		account.getBalance().addAndGet(balance);
-		notifyAll();
 	}
 
 
