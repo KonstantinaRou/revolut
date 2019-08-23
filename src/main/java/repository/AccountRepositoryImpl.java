@@ -50,7 +50,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 			account.getBalance().addAndGet(-balance);
 		}
 		else{
-			throw new InsufficientBalanceException(String.format("Not enough balance for name %s]", account.getName()));
+			throw new InsufficientBalanceException(String.format("Insufficient balance for %s", account.getName()));
 		}
 	}
 	/**{@inheritDoc}*/
