@@ -17,7 +17,7 @@ for money transfers between accounts.
 
 `    cd target/`
 
-`    java -jar revolut.jar`
+`    java -jar revolut-1.0-SNAPSHOT.jar --server`
 
 ## API Reference
 

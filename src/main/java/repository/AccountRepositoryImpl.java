@@ -15,6 +15,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 	private Map<String, Account> accountHashMap = new ConcurrentHashMap<>();
 
+	/**{@inheritDoc}*/
 	@Override
 	public synchronized void createAcount(String name) throws AccountAlreadyExistsException {
 		if (!existsAccount(name)){
