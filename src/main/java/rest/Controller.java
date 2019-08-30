@@ -30,7 +30,9 @@ public class Controller {
 		try {
 			bankService.withdraw(name,amount);
 			return Response.status(200).build();
-		} catch (AccountNoFoundException | InsufficientBalanceException e) {
+		} catch (AccountNoFoundException e) {
+			return Response.status(404).entity(e.getMessage()).build();
+		} catch (InsufficientBalanceException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}
 	}
@@ -42,7 +44,7 @@ public class Controller {
 			bankService.deposit(name,amount);
 			return Response.status(200).build();
 		} catch (AccountNoFoundException e) {
-			return Response.status(400).entity(e.getMessage()).build();
+			return Response.status(404).entity(e.getMessage()).build();
 		}
 	}
 
@@ -53,7 +55,9 @@ public class Controller {
 		try {
 			bankService.transfer(from,to,amount);
 			return Response.status(200).build();
-		} catch (AccountNoFoundException | InsufficientBalanceException e) {
+		} catch (AccountNoFoundException e) {
+			return Response.status(404).entity(e.getMessage()).build();
+		} catch (InsufficientBalanceException e) {
 			return Response.status(400).entity(e.getMessage()).build();
 		}
 	}
@@ -77,7 +81,7 @@ public class Controller {
 			Account account = bankService.getAccount(name);
 			return Response.status(200).entity(account.toString()).build();
 		} catch (AccountNoFoundException e) {
-			return Response.status(400).entity(e.getMessage()).build();
+			return Response.status(404).entity(e.getMessage()).build();
 		}
 	}
 
