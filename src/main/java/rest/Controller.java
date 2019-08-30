@@ -3,6 +3,7 @@ package rest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import model.Account;
 import service.BankServiceImpl;
 
-@Path("/")
+@Path("/revolut")
 @Slf4j
 public class Controller {
 
@@ -24,8 +25,8 @@ public class Controller {
 
 
 	@POST
-	@Path("/withdraw")
-	public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") int amount){
+	@Path("/accounts/{name}/withdraw")
+	public Response withdraw(@PathParam("name") String name, @QueryParam("amount") int amount){
 		try {
 			bankService.withdraw(name,amount);
 			return Response.status(200).build();
@@ -35,8 +36,8 @@ public class Controller {
 	}
 
 	@POST
-	@Path("/deposit")
-	public Response deposit(@QueryParam("name") String name, @QueryParam("amount") int amount){
+	@Path("/accounts/{name}/deposit")
+	public Response deposit(@PathParam("name") String name, @QueryParam("amount") int amount){
 		try {
 			bankService.deposit(name,amount);
 			return Response.status(200).build();
@@ -46,11 +47,11 @@ public class Controller {
 	}
 
 	@POST
-	@Path("/transfer")
-	public Response transfer(@QueryParam("fromName") String fromName,
-							 @QueryParam("toName") String toName, @QueryParam("amount") int amount ){
+	@Path("/accounts/{from}/transfer/{to}")
+	public Response transfer(@PathParam("from") String from,
+							 @PathParam("to") String to, @QueryParam("amount") int amount ){
 		try {
-			bankService.transfer(fromName,toName,amount);
+			bankService.transfer(from,to,amount);
 			return Response.status(200).build();
 		} catch (AccountNoFoundException | InsufficientBalanceException e) {
 			return Response.status(400).entity(e.getMessage()).build();
@@ -58,7 +59,7 @@ public class Controller {
 	}
 
 	@POST
-	@Path("/create/account")
+	@Path("/accounts")
 	public Response createAccount(@QueryParam("name") String name){
 
 		try {
@@ -70,8 +71,8 @@ public class Controller {
 	}
 
 	@GET
-	@Path("/getAccount")
-	public Response getAccount(@QueryParam("name") String name){
+	@Path("/accounts/{name}")
+	public Response getAccount(@PathParam("name") String name){
 		try {
 			Account account = bankService.getAccount(name);
 			return Response.status(200).entity(account.toString()).build();
