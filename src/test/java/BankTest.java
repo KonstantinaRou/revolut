@@ -32,7 +32,7 @@ public class BankTest {
 
 
 	@Test
-	public void TestCreateAccount() throws AccountAlreadyExistsException, AccountNoFoundException {
+	public void CreateAccount_Account_CreatesAccount() throws AccountAlreadyExistsException, AccountNoFoundException {
 		bankRepository.createAcount("Konstantina");
 		Account expectedAccount = new Account("Konstantina");
 		assertEquals(expectedAccount,bankRepository.getAccount("Konstantina"));
@@ -40,13 +40,14 @@ public class BankTest {
 	}
 
 	@Test(expected = AccountAlreadyExistsException.class)
-	public void TestCreateAccountForExistingAccount() throws AccountAlreadyExistsException {
+	public void CreateAccount_ExistingAccountName_AccountAlreadyExistsException() throws AccountAlreadyExistsException {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.createAcount("Konstantina");
 	}
 
 	@Test
-	public void TestDeposit() throws AccountNoFoundException, AccountAlreadyExistsException {
+	public void Deposit_Amount_AddsAmountToBalance() throws AccountNoFoundException,
+		AccountAlreadyExistsException {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.deposit("Konstantina",20);
 		Account expectedAccount = new Account("Konstantina");
@@ -56,7 +57,7 @@ public class BankTest {
 
 
 	@Test
-	public void TestWithdraw()
+	public void Withdraw_Amount_subtractsAmountFromBalance()
 		throws AccountNoFoundException, AccountAlreadyExistsException, InsufficientBalanceException {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.deposit("Konstantina",20);
@@ -67,7 +68,7 @@ public class BankTest {
 	}
 
 	@Test
-	public void TestTransfer()
+	public void Transfer_Amount_subtractsAmountFromOneAccountAndAddsItToAnother()
 		throws AccountNoFoundException, AccountAlreadyExistsException, InsufficientBalanceException {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.deposit("Konstantina",20);
@@ -80,7 +81,7 @@ public class BankTest {
 	}
 
 	@Test
-	public void TestGetAccount() throws AccountNoFoundException, AccountAlreadyExistsException {
+	public void GetAccount_Account_ReturnsAccount() throws AccountNoFoundException, AccountAlreadyExistsException {
 		bankRepository.createAcount("Konstantina");
 		Account expectedAccount = new Account("Konstantina");
 
@@ -88,12 +89,12 @@ public class BankTest {
 	}
 
 	@Test(expected = AccountNoFoundException.class)
-	public void TestAccountNotFound() throws AccountNoFoundException {
+	public void GetAccount_AccountThatDoesntExit_AccountNoFoundException() throws AccountNoFoundException {
 		bankRepository.getAccount("Joe");
 	}
 
 	@Test(expected = InsufficientBalanceException.class)
-	public void TestOutOfBalanceTest()
+	public void Withdraw_AmountBiggerThanExistingAccountBalance_InsufficientBalanceException()
 		throws AccountNoFoundException, InsufficientBalanceException, AccountAlreadyExistsException {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.deposit("Konstantina",20);
@@ -103,7 +104,7 @@ public class BankTest {
 
 	//  the following two tests create multiple threads that they overlap to test the Thread Safety of the project.
 	@Test
-	public void TestThreadSafetyCreateAccounts() throws ExecutionException, InterruptedException {
+	public void createAccount_multipleThreads_createAccounts() throws ExecutionException, InterruptedException {
 		int threads = 10;
 
 		List<String> names = new ArrayList<>();
@@ -144,7 +145,7 @@ public class BankTest {
 	}
 
 	@Test
-	public void TestThreadSafetyDepositWithdrawTransfer()
+	public void DepositWithDrawTransfer_multipleThreads_AddsSubtractsTranfersAmmount()
 		throws ExecutionException, InterruptedException, AccountNoFoundException, AccountAlreadyExistsException {
 		int threads = 1000;
 		bankRepository.createAcount("Vasilis");
