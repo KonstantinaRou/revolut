@@ -18,7 +18,12 @@ public class Account {
 	/**
 	 * The balance of the account
 	 * */
-	final AtomicInteger balance = new AtomicInteger(0);
+	int balance=0;
+
+	public Account(final String name) {
+		this.name = name;
+		this.balance=0;
+	}
 
 	/**
 	 * The name of the account
@@ -34,7 +39,7 @@ public class Account {
 		if (!(o instanceof Account))
 			return false;
 		final Account account = (Account) o;
-		return balance.get() == account.balance.get() && Objects.equals(name, account.name);
+		return balance == account.balance && Objects.equals(name, account.name);
 	}
 
 	@Override

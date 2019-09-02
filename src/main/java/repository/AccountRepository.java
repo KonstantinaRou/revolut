@@ -52,4 +52,6 @@ public interface AccountRepository {
 	 */
 	Account getAccount(final String name) throws AccountNoFoundException;
 
+	Map<String, Account> getMap();
+
 }

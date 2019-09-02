@@ -23,7 +23,6 @@ public class Controller {
 	@Inject
 	BankServiceImpl bankService;
 
-
 	@POST
 	@Path("/accounts/{name}/withdraw")
 	public Response withdraw(@PathParam("name") String name, @QueryParam("amount") int amount){

@@ -15,6 +15,7 @@ import repository.AccountRepositoryImpl;
 public class BankServiceImpl implements BankService {
 
 	private AccountRepository accountRepository;
+
 	@Inject
 	public BankServiceImpl(final AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
@@ -28,13 +29,13 @@ public class BankServiceImpl implements BankService {
 
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized Account getAccount(final String name) throws AccountNoFoundException {
+	public  Account getAccount(final String name) throws AccountNoFoundException {
 		return accountRepository.getAccount(name);
 	}
 
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized void withdraw(final String name, final int amount)
+	public  void withdraw(final String name, final int amount)
 		throws AccountNoFoundException, InsufficientBalanceException {
 		Account account = accountRepository.getAccount(name);
 		accountRepository.withdraw(account,amount);
@@ -42,14 +43,14 @@ public class BankServiceImpl implements BankService {
 	}
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized void deposit(final String name, final int amount) throws AccountNoFoundException {
+	public void deposit(final String name, final int amount) throws AccountNoFoundException {
 		Account account = accountRepository. getAccount(name);
 		accountRepository.deposit(account,amount);
 	}
 
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized void transfer(final String fromName,final String toName, final int amount)
+	public  void transfer(final String fromName,final String toName, final int amount)
 		throws AccountNoFoundException, InsufficientBalanceException {
 			withdraw(fromName, amount);
 			deposit(toName, amount);

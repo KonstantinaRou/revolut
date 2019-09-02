@@ -18,6 +18,7 @@ import exceptions.AccountNoFoundException;
 import exceptions.InsufficientBalanceException;
 import lombok.extern.slf4j.Slf4j;
 import model.Account;
+import repository.AccountRepository;
 import repository.AccountRepositoryImpl;
 import service.BankServiceImpl;
 
@@ -25,10 +26,11 @@ import static org.junit.Assert.assertEquals;
 
 
 @Slf4j
-public class BankTest {
+public class BankJUnitTest {
 
 
 	private BankServiceImpl bankRepository = new BankServiceImpl(new AccountRepositoryImpl());
+	private AccountRepository accountRepository = new AccountRepositoryImpl();
 
 
 	@Test
@@ -51,7 +53,7 @@ public class BankTest {
 		bankRepository.createAcount("Konstantina");
 		bankRepository.deposit("Konstantina",20);
 		Account expectedAccount = new Account("Konstantina");
-		expectedAccount.getBalance().addAndGet(20);
+		expectedAccount.setBalance(20);
 		assertEquals(expectedAccount,bankRepository.getAccount("Konstantina"));
 	}
 
@@ -63,7 +65,7 @@ public class BankTest {
 		bankRepository.deposit("Konstantina",20);
 		bankRepository.withdraw("Konstantina",10);
 		Account expectedAccount = new Account("Konstantina");
-		expectedAccount.getBalance().addAndGet(10);
+		expectedAccount.setBalance(10);
 		assertEquals(expectedAccount,bankRepository.getAccount("Konstantina"));
 	}
 
@@ -76,7 +78,7 @@ public class BankTest {
 		bankRepository.deposit("Vasilis",20);
 		bankRepository.transfer("Konstantina","Vasilis",5);
 		Account expectedAccount = new Account("Konstantina");
-		expectedAccount.getBalance().addAndGet(15);
+		expectedAccount.setBalance(15);
 		assertEquals(expectedAccount,bankRepository.getAccount("Konstantina"));
 	}
 
@@ -105,11 +107,9 @@ public class BankTest {
 	//  the following two tests create multiple threads that they overlap to test the Thread Safety of the project.
 	@Test
 	public void createAccount_multipleThreads_createAccounts() throws ExecutionException, InterruptedException {
-		int threads = 10;
+		int threads = 1000;
 
 		List<String> names = new ArrayList<>();
-
-
 		CountDownLatch latch = new CountDownLatch(1);
 		AtomicBoolean running = new AtomicBoolean();
 		AtomicInteger overlaps = new AtomicInteger();
@@ -117,7 +117,6 @@ public class BankTest {
 		Collection<Future<String>> futures = new ArrayList<>(threads);
 
 		for (int t = 0; t < threads; ++t) {
-			final String title = String.format("Account #%d", t);
 			futures.add(
 				service.submit(
 					() -> {
@@ -127,7 +126,7 @@ public class BankTest {
 						}
 						running.set(true);
 						String uuid = UUID.randomUUID().toString();
-						bankRepository.createAcount(uuid);
+						accountRepository.createAcount(uuid);
 						names.add(uuid);
 						running.set(false);
 						return uuid;
@@ -137,10 +136,12 @@ public class BankTest {
 		}
 		latch.countDown();
 		Set<String> ids = new HashSet<>();
+		log.info("Futures size {}",futures.size());
 		for (Future<String> f : futures) {
 			ids.add(f.get());
 		}
 		log.info("Overlaps: {}, id size: {}" ,overlaps.get(),ids.size());
+		log.info("Map size {}",accountRepository.getMap().size());
 		assertEquals(ids.size(),threads);
 	}
 
@@ -185,7 +186,7 @@ public class BankTest {
 			ids.add(f.get());
 		}
 		log.info("Overlaps: {}, id size: {}" ,overlaps.get(),ids.size());
-		assertEquals(10000,bankRepository.getAccount("Konstantina").getBalance().get());
+		assertEquals(10000,bankRepository.getAccount("Konstantina").getBalance());
 	}
 
 

@@ -1,5 +1,6 @@
 package repository;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,13 +14,16 @@ import model.Account;
 public class AccountRepositoryImpl implements AccountRepository {
 
 
-	private Map<String, Account> accountHashMap = new ConcurrentHashMap<>();
+	private Map<String, Account> accountHashMap = new HashMap<>();
+
+	public Map<String, Account> getMap(){
+		return accountHashMap;
+	}
 
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized void createAcount(String name) throws AccountAlreadyExistsException {
+	public  synchronized void createAcount(String name) throws AccountAlreadyExistsException {
 		if (!existsAccount(name)){
-			log.info("Creating account: {}" ,name);
 			accountHashMap.put(name, new Account(name));
 		}
 		else {
@@ -29,7 +33,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 	/**{@inheritDoc}*/
 	@Override
-	public synchronized Account getAccount(final String name) throws AccountNoFoundException {
+	public  Account getAccount(final String name) throws AccountNoFoundException {
 		if (existsAccount(name)) {
 			return accountHashMap.get(name);
 		}
@@ -47,8 +51,10 @@ public class AccountRepositoryImpl implements AccountRepository {
 	/**{@inheritDoc}*/
 	@Override
 	public synchronized void withdraw(final Account account, final int balance) throws InsufficientBalanceException {
-		if (balance<=account.getBalance().get()){
-			account.getBalance().addAndGet(-balance);
+		if (balance<=account.getBalance()){
+			int newBalance = account.getBalance()-balance;
+			account.setBalance(newBalance);
+
 		}
 		else{
 			throw new InsufficientBalanceException(String.format("Insufficient balance for %s", account.getName()));
@@ -57,8 +63,8 @@ public class AccountRepositoryImpl implements AccountRepository {
 	/**{@inheritDoc}*/
 	@Override
 	public synchronized void deposit(final Account account, final int balance) {
-
-		account.getBalance().addAndGet(balance);
+		int newBalance = account.getBalance()+balance;
+		account.setBalance(newBalance);
 	}
 
 
