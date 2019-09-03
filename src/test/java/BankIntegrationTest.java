@@ -32,8 +32,7 @@ public class BankIntegrationTest  {
 											// add an adhoc module specific to the test
 											.module(binder -> binder.bind(BankService.class).to(BankServiceImpl.class))
 											.module(binder -> binder.bind(AccountRepository.class).to(AccountRepositoryImpl.class))
-											.module(binder->JerseyModule.extend(binder).addResource(Controller.class))
-											.createRuntime().run();
+											.module(binder->JerseyModule.extend(binder).addResource(Controller.class)).run();
 	}
 
 
@@ -47,6 +46,11 @@ public class BankIntegrationTest  {
 	public void GetAccount_ValidAccount_FoundStatus(){
 		given().queryParam("name","Konstantina").when().post("revolut/accounts");
 		when().get("revolut/accounts/Konstantina").then().statusCode(200);
+	}
+
+	@Test
+	public void GetAccount_ValidAccount_ResponseWithAccount(){
+		given().queryParam("name","Konstantina").when().post("revolut/accounts");
 		when().get("revolut/accounts/Konstantina").then().assertThat().body(equalTo("Account(balance=0, " +
 																						"name=Konstantina)"));
 	}
@@ -68,6 +72,15 @@ public class BankIntegrationTest  {
 		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit").then().statusCode(200);
 
 	}
+
+
+	@Test
+	public void Deposit_ValidAmountValidAccount_AddsAmountToBalanceOfAccount(){
+		given().queryParam("name","Konstantina").when().post("revolut/accounts");
+		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit");
+		when().get("revolut/accounts/Konstantina").then().assertThat().body(equalTo("Account(balance=20, " +
+																						"name=Konstantina)"));
+	}
 	@Test
 	public void Deposit_ValidAmountNotValidAccount_NotFoundStatus(){
 		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit").then().statusCode(404);
@@ -80,6 +93,15 @@ public class BankIntegrationTest  {
 		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit");
 		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/withdraw").then().statusCode(200);
 
+	}
+
+	@Test
+	public void Withdraw_ValidAccountValidAmount_SubtractsAmountFromBalanceOfAccount(){
+		given().queryParam("name","Konstantina").when().post("revolut/accounts");
+		given().queryParam("amount",50).when().post("revolut/accounts/Konstantina/deposit");
+		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/withdraw");
+		when().get("revolut/accounts/Konstantina").then().assertThat().body(equalTo("Account(balance=30, " +
+																						"name=Konstantina)"));
 	}
 
 	@Test
@@ -110,6 +132,18 @@ public class BankIntegrationTest  {
 		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit");
 		given().queryParam("amount",10).when().post("revolut/accounts/Konstantina/transfer/Vasilis").then().statusCode(200);
 
+	}
+
+	@Test
+	public void Transfer_ValidFromAccountValidToAccountValidAmount_TransferAmountFromOneAccountToOther(){
+		given().queryParam("name","Konstantina").when().post("revolut/accounts");
+		given().queryParam("name","Vasilis").when().post("revolut/accounts");
+		given().queryParam("amount",20).when().post("revolut/accounts/Konstantina/deposit");
+		given().queryParam("amount",10).when().post("revolut/accounts/Konstantina/transfer/Vasilis");
+		when().get("revolut/accounts/Konstantina").then().assertThat().body(equalTo("Account(balance=10, " +
+																						"name=Konstantina)"));
+		when().get("revolut/accounts/Vasilis").then().assertThat().body(equalTo("Account(balance=10, " +
+																						"name=Vasilis)"));
 	}
 
 	@Test
