@@ -23,13 +23,12 @@ for money transfers between accounts.
 
 ### Create new account
 
-`POST http://localhost:8080/create/account/?name=Flo`
+`POST http://localhost:8080/revolut/accounts?name=Flo`
 
 Response example:
 ```
 200 OK
 
-Account(balance=0, name=Flo)
 ```
 
 or in case of error:
@@ -42,7 +41,7 @@ Account Flo already exists
 
 ### Get account
 
-`GET http://localhost:8080/getAccount/?name=Flo`
+`GET http://localhost:8080/revolut/accounts/Flo`
 
 Response example:
 ```
@@ -61,7 +60,7 @@ Account Flo doesnt exist
 
 ### Deposit money to the account
 
-`POST http://localhost:8080/deposit?name=Flo&amount=20`
+`PUT http://localhost:8080/revolut/accounts/Flo/deposit?amount=20`
 
 Response example:
 ```
@@ -78,7 +77,7 @@ Account Flo doesnt exist
 
 ### Withdraw money from the account
 
-`POST http://localhost:8080/withdraw?name=Flo&amount=20`
+`PUT http://localhost:8080/revolut/accounts/Flo/withdraw?amount=20`
 
 Response example:
 ```
@@ -100,7 +99,7 @@ Insufficient balance for %s
 
 ### Transfer money to another account
 
-`POST http://localhost:8080/transfer?fromName=Bo&toName=Flo&amount=5`
+`PUT http://localhost:8080/revolut/accounts/Flo/transfer/Bill?amount=5`
 
 Response example:
 ```

@@ -2,6 +2,7 @@ package rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -23,7 +24,7 @@ public class Controller {
 	@Inject
 	BankServiceImpl bankService;
 
-	@POST
+	@PUT
 	@Path("/accounts/{name}/withdraw")
 	public Response withdraw(@PathParam("name") String name, @QueryParam("amount") int amount){
 		try {
@@ -36,7 +37,7 @@ public class Controller {
 		}
 	}
 
-	@POST
+	@PUT
 	@Path("/accounts/{name}/deposit")
 	public Response deposit(@PathParam("name") String name, @QueryParam("amount") int amount){
 		try {
@@ -47,7 +48,7 @@ public class Controller {
 		}
 	}
 
-	@POST
+	@PUT
 	@Path("/accounts/{from}/transfer/{to}")
 	public Response transfer(@PathParam("from") String from,
 							 @PathParam("to") String to, @QueryParam("amount") int amount ){
